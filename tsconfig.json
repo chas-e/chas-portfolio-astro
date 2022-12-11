@@ -1,0 +1,11 @@
+{
+  "extends": "astro/tsconfigs/strict"
+  "paths": {
+    "components/*": ["src/components/*"],
+    "layouts/*": ["src/layouts/*"],
+    "pages/*": ["src/pages/*"],
+    "public/*": ["src/public/*"],
+    "styles/*": ["src/styles/*"],
+    // "lib/*": ["src/lib/*"]
+  }
+}
