@@ -1,14 +1,16 @@
 import fs from 'fs'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import mongodb from 'mongodb'
 import morgan from 'morgan'
 import { createServer as createViteServer } from 'vite'
+import { connectToDatabase } from './mongodb/connect.mjs'
 
 async function createServer() {
+    // Set PORT
+    const PORT = process.env.PORT || 3001
+
     // Instantiate App
     const app = express()
 
@@ -32,7 +34,7 @@ async function createServer() {
     app.get('/', (req, res) => {
         res.send('This is a home page!')
     })
-    // Catch all for 404
+
     app.use('*', async (req, res, next) => {
         const url = req.originalUrl
         try {
@@ -64,28 +66,13 @@ async function createServer() {
         }
     })
 
-    // Instantiate db client
-    const mongoClient = mongodb.MongoClient
-    const mongoURI = process.env.MONGODB_URI
+    // Connect to database
+    connectToDatabase()
 
-    // Configure port
-    const port = process.env.PORT || 5173
-
-    mongoClient
-        .connect(mongoURI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            serverApi: mongodb.ServerApiVersion.v1,
-        })
-        .catch((err) => {
-            console.error(err.stack)
-            process.exit(1)
-        })
-        .then(async (client) => {
-            app.listen(port, () => {
-                console.log(`Listening on port ${port}`)
-            })
-        })
+    // Start Express server
+    app.listen(PORT, () => {
+        console.log(`Server running on port: ${PORT}`)
+    })
 }
 
 createServer()
